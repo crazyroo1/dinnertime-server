@@ -24,7 +24,7 @@ final class SessionManager {
         sessions[sessionKey] = session
         
         socket.onClose.whenComplete { [weak session] result in
-            print("socket closed")
+            print("socket closed for reason \(result) - \(socket.closeCode)")
             print(self.sessions)
             guard let session else { return }
             print("session in memory")
