@@ -9,6 +9,9 @@ public func configure(_ app: Application) async throws {
 
     app.migrations.add(User.Migration())
     app.migrations.add(UserToken.Migration())
+    app.migrations.add(Location.Migration())
+    app.migrations.add(Tag.Migration())
+    app.migrations.add(LocationTag.Migration())
     
     try await app.autoMigrate()
 

@@ -52,7 +52,7 @@ extension UserToken {
                 .id()
                 .field("value", .string, .required)
                 .field("expiration_date", .date, .required)
-                .field("user_id", .uuid, .required, .references("users", "id"))
+                .field("user_id", .uuid, .required, .references(User.schema, "id"))
                 .unique(on: "value")
                 .create()
         }
