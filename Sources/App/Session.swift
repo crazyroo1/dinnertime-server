@@ -70,9 +70,6 @@ final class Session {
             guard let self else { return }
             print("has self")
             await self.handle(message, from: sessionUser)
-            
-            // uncomment if only one message is getting through
-            // prepareSocketForMessage(sessionUser)
         }
     }
     
@@ -82,7 +79,6 @@ final class Session {
      
      Code:
      - preferences
-     - ready
      
      Params:
      ; separated
@@ -103,7 +99,6 @@ final class Session {
         
         switch code {
         case "preferences": await setPreferences(message, for: user)
-        case "ready": await makeDecision()
         default: print("error")
         }
     }
