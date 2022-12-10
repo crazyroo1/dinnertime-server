@@ -31,6 +31,10 @@ final class SessionManager {
             
             session.removeUser(sessionUser)
             
+            Task {
+                try await session.sendUserCountUpdate()
+            }
+            
             if session.canBeSafelyRemoved {
                 self.sessions[sessionKey] = nil
                 print("session removed.")
@@ -48,12 +52,16 @@ final class Session {
         
         print("added user. new list is \(users)")
         Task {
-            for socket in users.map({ $0.socket }) {
-                try await socket.send("\(users.count)")
-            }
+            try await sendUserCountUpdate()
         }
         
         prepareSocketForMessage(sessionUser)
+    }
+    
+    func sendUserCountUpdate() async throws {
+        for socket in users.map({ $0.socket }) {
+            try await socket.send("\(users.count)")
+        }
     }
     
     func prepareSocketForMessage(_ sessionUser: SessionUser) {
