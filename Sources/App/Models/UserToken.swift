@@ -38,7 +38,7 @@ extension UserToken: ModelTokenAuthenticatable {
     static var userKey = \UserToken.$user
     
     var isValid: Bool {
-        return expirationDate > .now
+        return expirationDate > Date()
     }
 }
 
