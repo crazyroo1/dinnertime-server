@@ -47,6 +47,11 @@ final class Session {
         users.append(sessionUser)
         
         print("added user. new list is \(users)")
+        Task {
+            for socket in users.map({ $0.socket }) {
+                try await socket.send("\(users.count)")
+            }
+        }
         
         prepareSocketForMessage(sessionUser)
     }
