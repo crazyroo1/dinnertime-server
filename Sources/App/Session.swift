@@ -82,7 +82,6 @@ final class Session {
      
      Code:
      - preferences
-     - ready
      
      Params:
      ; separated
@@ -103,7 +102,6 @@ final class Session {
         
         switch code {
         case "preferences": await setPreferences(message, for: user)
-        case "ready": await makeDecision()
         default: print("error")
         }
     }
