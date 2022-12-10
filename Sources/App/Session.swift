@@ -112,9 +112,10 @@ final class Session {
             return
         }
         
+        print(users)
+        print(users.map { $0.socket })
         for socket in users.map({ $0.socket }) {
-            try? await socket.send(decision.name)
-            try? await socket.close()
+            try! await socket.send(decision.name)
         }
     }
     
@@ -136,6 +137,10 @@ final class Session {
         preferences[try! user.user.requireID()] = locations
         
         print("preferences updated: \(preferences)")
+        
+        if preferences.keys.elementsEqual(users.map { $0.user.id! }) { // all are finished
+            await makeDecision()
+        }
     }
     
     func removeUser(_ sessionUser: SessionUser) {

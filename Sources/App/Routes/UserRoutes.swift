@@ -23,9 +23,6 @@ struct UserRoutes: RouteCollection {
     func createAccount(req: Request) async throws -> HTTPStatus {
         try User.Create.validate(content: req)
         let data = try req.content.decode(User.Create.self)
-        guard data.password == data.confirmPassword else {
-            throw Abort(.badRequest, reason: "Passwords did not match")
-        }
         
         if try await !User
                         .query(on: req.db)

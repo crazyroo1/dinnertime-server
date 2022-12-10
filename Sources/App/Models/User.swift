@@ -44,7 +44,6 @@ extension User {
         let name: String
         let username: String
         let password: String
-        let confirmPassword: String
         
         static func validations(_ validations: inout Validations) {
             validations.add("name", as: String.self, is: !.empty)
