@@ -14,7 +14,7 @@ struct SessionRoutes: RouteCollection {
             .grouped(UserToken.authenticator())
             .grouped("sessions")
         
-        sessions.webSocket("join", ":key", shouldUpgrade: { req in
+        sessions.webSocket("join", shouldUpgrade: { req in
             print("should upgrade?")
             print(req)
             let tokenValue = try req.query.get(String.self, at: "token").fromBase64()
@@ -49,7 +49,9 @@ struct SessionRoutes: RouteCollection {
             let user = try req.auth.require(User.self)
             print("upgraded and has user")
             
-            guard let key = req.parameters.get("key") else {
+            let key = try req.query.get(String.self, at: "key")
+            
+            guard key != "" else {
                 try await socket.close()
                 return
             }
