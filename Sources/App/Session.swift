@@ -151,7 +151,11 @@ final class Session {
         
         print("preferences updated: \(preferences)")
         
-        if preferences.keys.elementsEqual(users.map { $0.user.id! }) { // all are finished
+//        if preferences.keys.elementsEqual(users.map { $0.user.id! }) { // all are finished
+//            await makeDecision()
+//        }
+        
+        if preferences.count >= users.count {
             await makeDecision()
         }
     }
