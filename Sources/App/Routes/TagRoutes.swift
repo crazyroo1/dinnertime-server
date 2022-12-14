@@ -18,10 +18,15 @@ struct TagRoutes: RouteCollection {
         tags.get(use: all)
         tags.post("new", use: new)
         tags.delete("delete", use: delete)
+        
+        tags.post("assign", use: assign)
+        tags.post("unassign", use: unassign)
     }
     
     func all(req: Request) async throws -> [Tag] {
-        let tags = try await Tag.query(on: req.db)
+        let tags = try await Tag
+            .query(on: req.db)
+            .with(\.$locations)
             .sort(\.$value)
             .all()
         
@@ -48,6 +53,52 @@ struct TagRoutes: RouteCollection {
         }
         
         try await tag.delete(on: req.db)
+        
+        return .ok
+    }
+    
+    func assign(req: Request) async throws -> HTTPStatus {
+        let tagName = try req.content.get(String.self, at: "tag")
+        let locationName = try req.content.get(String.self, at: "location")
+        
+        guard let tag = try await Tag
+            .query(on: req.db)
+            .filter(\.$value, .equal, tagName)
+            .first() else {
+            throw Abort(.badRequest, reason: "A tag with that name doesn not exist")
+        }
+        
+        guard let location = try await Location
+            .query(on: req.db)
+            .filter(\.$name, .equal, locationName)
+            .first() else {
+            throw Abort(.badRequest, reason: "A location with that name does not exist")
+        }
+        
+        try await location.$tags.attach(tag, method: .ifNotExists, on: req.db)
+        
+        return .ok
+    }
+    
+    func unassign(req: Request) async throws -> HTTPStatus {
+        let tagName = try req.content.get(String.self, at: "tag")
+        let locationName = try req.content.get(String.self, at: "location")
+        
+        guard let tag = try await Tag
+            .query(on: req.db)
+            .filter(\.$value, .equal, tagName)
+            .first() else {
+            throw Abort(.badRequest, reason: "A tag with that name doesn not exist")
+        }
+        
+        guard let location = try await Location
+            .query(on: req.db)
+            .filter(\.$name, .equal, locationName)
+            .first() else {
+            throw Abort(.badRequest, reason: "A location with that name does not exist")
+        }
+        
+        try await location.$tags.detach(tag, on: req.db)
         
         return .ok
     }

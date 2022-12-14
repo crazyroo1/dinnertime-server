@@ -23,6 +23,7 @@ struct LocationRoutes: RouteCollection {
     func all(req: Request) async throws -> [Location] {
         let locations = try await Location
             .query(on: req.db)
+            .with(\.$tags)
             .sort(\.$name)
             .all()
         
